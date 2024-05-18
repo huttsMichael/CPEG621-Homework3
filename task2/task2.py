@@ -1,4 +1,4 @@
-def parse_tac(instruction, latencies):
+def parse_tac(instruction: str, latencies):
     # split the = and any other ops to handle seperately
     result_var, operation_part = instruction.split('=')
     result_var = result_var.strip()
@@ -11,10 +11,24 @@ def parse_tac(instruction, latencies):
             return (result_var, op, dependencies)
     
     # fallback return if no operations found
-    return (result_var, '?', [])
+    # print(f"fallback: {instruction}")
+    return (result_var,  '=', [])
 
-def calculate_cycles_from_code(instructions_raw, latencies):
-    instructions = [parse_tac(instr, latencies) for instr in instructions_raw]
+def calculate_cycles_from_code(instructions_raw: list[str], latencies):
+    instructions = []
+    for instr in instructions_raw:
+        
+        if "BB" in instr or "}" in instr or "else" in instr:
+            continue
+        elif "if" in instr:
+            result_var = instr.split('(')[1].split(')')[0].strip() # ugly but saves me writing regex
+            result = (result_var, "?", [result_var])
+        else:
+            result = parse_tac(instr, latencies)
+
+        # print(instr, result)
+        instructions.append(result)
+        
 
     ready_time = {}
     max_cycle = 0
