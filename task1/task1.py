@@ -5,7 +5,7 @@ def show_code(code):
     for line in code:
         print(line)
 
-def generate_basic_blocks(path, output_path=None, verbose=False):
+def generate_basic_blocks(code_segment: list[str], output_path=None, verbose=False):
     # Set up logging based on the verbose flag with a simple format
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO,
                         format='%(message)s')
@@ -20,75 +20,74 @@ def generate_basic_blocks(path, output_path=None, verbose=False):
     contents_if = []
     contents_else = []
 
-    with open(path) as fp:
-        for line in fp:
-            line = line.strip()
-            if inside_if:
-                if "}" in line:
-                    inside_if = False
-                    logging.debug(f"ended if: {line}")
-                    processed_code.append(line)
-                else:
-                    logging.debug(f"inside if contents: {line}")
-                    contents_if.append(line)
-
-            elif inside_else:
-                if "}" in line:
-                    inside_else = False
-                    end_condition = True
-                    logging.debug(f"ended else: {line}")
-                    processed_code.append(line)
-                else:
-                    logging.debug(f"inside else contents: {line}")
-                    contents_else.append(line)
-
-            elif end_condition:
-                logging.debug(f"end of conditions: {line}")
-                end_condition = False
-                bb_counter += 1
-                contents_if.append(f"goto BB{bb_counter}")
-                contents_else.append(f"goto BB{bb_counter}")
-                for l in contents_if:
-                    processed_code.append(l)
-                for l in contents_else:
-                    processed_code.append(l)
-                processed_code.append(f"BB{bb_counter}:")
+    for line in code_segment:
+        line = line.strip()
+        if inside_if:
+            if "}" in line:
+                inside_if = False
+                logging.debug(f"ended if: {line}")
                 processed_code.append(line)
-                contents_if = []
-                contents_else = []
-
-            elif first_line:
-                logging.debug(f"first line: {line}")
-                first_line = False
-                processed_code.append(f"BB{bb_counter}:")
-                processed_code.append(line)
-
-
-
-            elif "if" in line:
-                inside_if = True
-                logging.debug(f"hit if: {line}")
-                bb_counter += 1
-                processed_code.append(line)
-                processed_code.append(f"goto BB{bb_counter}")
-                contents_if.append(f"BB{bb_counter}:")
-
-            elif "else" in line:
-                inside_else = True
-                logging.debug(f"hit else: {line}")
-                bb_counter += 1
-                processed_code.append(line)
-                processed_code.append(f"goto BB{bb_counter}")
-                contents_else.append(f"BB{bb_counter}:")
-                
             else:
-                logging.debug(f"nothing triggered: {line}")
-                processed_code.append(line)
+                logging.debug(f"inside if contents: {line}")
+                contents_if.append(line)
 
-            logging.debug("process code so far")
-            if verbose:
-                show_code(processed_code)
-                logging.debug("")
+        elif inside_else:
+            if "}" in line:
+                inside_else = False
+                end_condition = True
+                logging.debug(f"ended else: {line}")
+                processed_code.append(line)
+            else:
+                logging.debug(f"inside else contents: {line}")
+                contents_else.append(line)
+
+        elif end_condition:
+            logging.debug(f"end of conditions: {line}")
+            end_condition = False
+            bb_counter += 1
+            contents_if.append(f"goto BB{bb_counter}")
+            contents_else.append(f"goto BB{bb_counter}")
+            for l in contents_if:
+                processed_code.append(l)
+            for l in contents_else:
+                processed_code.append(l)
+            processed_code.append(f"BB{bb_counter}:")
+            processed_code.append(line)
+            contents_if = []
+            contents_else = []
+
+        elif first_line:
+            logging.debug(f"first line: {line}")
+            first_line = False
+            processed_code.append(f"BB{bb_counter}:")
+            processed_code.append(line)
+
+
+
+        elif "if" in line:
+            inside_if = True
+            logging.debug(f"hit if: {line}")
+            bb_counter += 1
+            processed_code.append(line)
+            processed_code.append(f"goto BB{bb_counter}")
+            contents_if.append(f"BB{bb_counter}:")
+
+        elif "else" in line:
+            inside_else = True
+            logging.debug(f"hit else: {line}")
+            bb_counter += 1
+            processed_code.append(line)
+            processed_code.append(f"goto BB{bb_counter}")
+            contents_else.append(f"BB{bb_counter}:")
+            
+        else:
+            logging.debug(f"nothing triggered: {line}")
+            processed_code.append(line)
+
+        logging.debug("process code so far")
+        if verbose:
+            show_code(processed_code)
+            logging.debug("")
 
     if output_path:
         with open(output_path, 'w') as out_fp:
@@ -106,4 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--verbose', action='store_true', help='Enable verbose debug output.')
     args = parser.parse_args()
 
-    generate_basic_blocks(args.input_file, args.output, args.verbose)
+    with open(args.input_file, 'r') as file:
+        code_segment = [line.strip() for line in file.readlines() if line.strip()]
+        print(f"input: {code_segment}")
+        generate_basic_blocks(code_segment, args.output, args.verbose)
