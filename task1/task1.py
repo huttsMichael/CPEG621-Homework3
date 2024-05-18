@@ -5,9 +5,7 @@ def show_code(code):
         print(line)
 
 def generate_basic_blocks(code_segment: list[str], output_path=None, verbose=False):
-    # Set up logging based on the verbose flag with a simple format
-    logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO,
-                        format='%(message)s')
+    logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format='%(message)s')
 
     bb_counter = 1
     inside_if = False
