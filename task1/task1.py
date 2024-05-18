@@ -1,11 +1,15 @@
 import argparse
+import logging
 
 def show_code(code):
     for line in code:
         print(line)
 
+def generate_basic_blocks(path, output_path=None, verbose=False):
+    # Set up logging based on the verbose flag with a simple format
+    logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO,
+                        format='%(message)s')
 
-def generate_basic_blocks(path):
     bb_counter = 1
     inside_if = False
     inside_else = False
@@ -18,29 +22,28 @@ def generate_basic_blocks(path):
 
     with open(path) as fp:
         for line in fp:
-            if "\n" in line:
-                line = line.replace("\n", "")
+            line = line.strip()
             if inside_if:
                 if "}" in line:
                     inside_if = False
-                    print(f"ended if: {line}")
+                    logging.debug(f"ended if: {line}")
                     processed_code.append(line)
                 else:
-                    print(f"inside if contents: {line}")
+                    logging.debug(f"inside if contents: {line}")
                     contents_if.append(line)
 
             elif inside_else:
                 if "}" in line:
                     inside_else = False
                     end_condition = True
-                    print(f"ended else: {line}")
+                    logging.debug(f"ended else: {line}")
                     processed_code.append(line)
                 else:
-                    print(f"inside else contents: {line}")
+                    logging.debug(f"inside else contents: {line}")
                     contents_else.append(line)
 
             elif end_condition:
-                print(f"end of conditions: {line}")
+                logging.debug(f"end of conditions: {line}")
                 end_condition = False
                 bb_counter += 1
                 contents_if.append(f"goto BB{bb_counter}")
@@ -55,12 +58,16 @@ def generate_basic_blocks(path):
                 contents_else = []
 
             elif first_line:
-                print(f"first line: {line}")
+                logging.debug(f"first line: {line}")
                 first_line = False
+                processed_code.append(f"BB{bb_counter}:")
+                processed_code.append(line)
+
+
 
             elif "if" in line:
                 inside_if = True
-                print(f"hit if: {line}")
+                logging.debug(f"hit if: {line}")
                 bb_counter += 1
                 processed_code.append(line)
                 processed_code.append(f"goto BB{bb_counter}")
@@ -68,28 +75,35 @@ def generate_basic_blocks(path):
 
             elif "else" in line:
                 inside_else = True
-                print(f"hit else: {line}")
+                logging.debug(f"hit else: {line}")
                 bb_counter += 1
                 processed_code.append(line)
                 processed_code.append(f"goto BB{bb_counter}")
                 contents_else.append(f"BB{bb_counter}:")
                 
             else:
-                print(f"nothing triggered: {line}")
+                logging.debug(f"nothing triggered: {line}")
                 processed_code.append(line)
 
-            print("process code so far")
+            logging.debug("process code so far")
+            if verbose:
+                show_code(processed_code)
+                logging.debug("")
+
+    if output_path:
+        with open(output_path, 'w') as out_fp:
+            for line in processed_code:
+                out_fp.write(line + '\n')
+    else:
+        logging.debug("final output:")
+        if verbose:
             show_code(processed_code)
-            print()
 
-    print("final output:")
-    print(processed_code)
-                
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Generate basic blocks from source code.")
+    parser.add_argument('input_file', type=str, help='Path to the input source code file.')
+    parser.add_argument('--output', type=str, help='Path to the output file to save the result.')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose debug output.')
+    args = parser.parse_args()
 
-file_path_0 = "../infile_0.txt"
-file_path_1 = "../infile_1.txt"
-
-generate_basic_blocks(file_path_0)
-generate_basic_blocks(file_path_1)
-
-
+    generate_basic_blocks(args.input_file, args.output, args.verbose)
