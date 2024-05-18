@@ -101,5 +101,5 @@ if __name__ == '__main__':
     with open(args.input_file, 'r') as file:
         code_segment = [line.strip() for line in file.readlines() if line.strip()]
         print(f"initial input: {code_segment}")
-        run_all(code_segment)
+        run_all(code_segment, args.output)
         
