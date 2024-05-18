@@ -11,7 +11,6 @@ def parse_tac(instruction: str, latencies):
             return (result_var, op, dependencies)
     
     # fallback return if no operations found
-    # print(f"fallback: {instruction}")
     return (result_var,  '=', [])
 
 def calculate_cycles_from_code(instructions_raw: list[str], latencies):
@@ -19,6 +18,7 @@ def calculate_cycles_from_code(instructions_raw: list[str], latencies):
     for instr in instructions_raw:
         
         if "BB" in instr or "}" in instr or "else" in instr:
+            # basic blocks, gotos, and brackets can be ignore. else handled identical to if.
             continue
         elif "if" in instr:
             result_var = instr.split('(')[1].split(')')[0].strip() # ugly but saves me writing regex
