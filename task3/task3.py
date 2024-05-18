@@ -5,8 +5,8 @@ def implement_cse(code_segment: list[str], output_path=None):
     tmp_counter = 1
 
     for position, line in enumerate(code_segment):
-        op = line.split('=')[1]
         print(line)
+        op = line.split('=')[1]
         if op in history and op not in explored:
             first_apperance = True
             processed_code.append(line)
