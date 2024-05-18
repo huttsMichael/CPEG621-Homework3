@@ -1,6 +1,6 @@
 import argparse
 
-def implement_cse(code_segment, output_path=None):
+def implement_cse(code_segment: list[str], output_path=None):
     history = []
     explored = []
     processed_code = []
