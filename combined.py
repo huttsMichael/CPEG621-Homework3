@@ -64,9 +64,19 @@ def run_all(code_segment):
     t3_total_latency = 0
     for block in t3_block_latency:
         t3_total_latency += t3_block_latency[block]
-
     
     print(f"post-CSE total latency: {t3_total_latency}")
+
+    # decide to keep or drop each block
+    combined_blocks = {}
+    for block in t1_split:
+        # only perform the transformation in the final code if it actually improves latency
+        if t3_block_latency[block] < t1_block_latency[block]:
+            combined_blocks[block] = t3_split[block]
+        else:
+            combined_blocks[block] = t1_split[block]
+    
+    print(f"final combination: {combined_blocks}")
 
 
 
