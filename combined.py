@@ -18,7 +18,7 @@ def segment_building_blocks(code_segment: list[str]):
 
 
     
-def run_all(code_segment):
+def run_all(code_segment, output_path=None):
     t1 = task1.generate_basic_blocks(code_segment)
     print(f"task 1 output: {t1}")
 
@@ -78,6 +78,18 @@ def run_all(code_segment):
     
     print(f"final combination: {combined_blocks}")
 
+    processed_code = []
+    for block in combined_blocks:
+        for line in combined_blocks[block]:
+            processed_code.append(line)
+
+    if output_path:
+        with open(output_path, 'w') as out_fp:
+            for line in processed_code:
+                out_fp.write(line + '\n')
+    else:
+        print("Final Code:")
+        task1.show_code(processed_code)
 
 
 if __name__ == '__main__':
