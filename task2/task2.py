@@ -1,3 +1,5 @@
+import argparse
+
 def parse_tac(instruction):
     # Split the instruction on '=' to separate the result variable and the operation part
     result_var, operation_part = instruction.split('=')
@@ -35,23 +37,26 @@ def calculate_cycles_from_code(instructions_raw, latencies):
 
     return max_cycle
 
-# Example code segment to process
-code_segment = [
-    "A = B*1",
-    "C = D+E",
-    "F = A+C"
-]
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Calculate cycles needed for three-address code instructions.")
+    parser.add_argument('input_file', type=str, help='Path to the input file containing TAC instructions.')
+    args = parser.parse_args()
 
-# Latency table
-latencies = {
-    '+': 1,
-    '-': 1,
-    '?': 2,
-    '=': 3,
-    '*': 4,
-    '/': 4,
-    '**': 8
-}
+    # Latency table
+    latencies = {
+        '+': 1,
+        '-': 1,
+        '?': 2,
+        '=': 3,
+        '*': 4,
+        '/': 4,
+        '**': 8
+    }
 
-# Calculate and print the total number of cycles needed for the example
-print(calculate_cycles_from_code(code_segment, latencies))
+    # Read the input file
+    with open(args.input_file, 'r') as file:
+        code_segment = [line.strip() for line in file.readlines() if line.strip()]
+
+    # Calculate and print the total number of cycles needed
+    total_cycles = calculate_cycles_from_code(code_segment, latencies)
+    print(f"Total cycles needed: {total_cycles}")
