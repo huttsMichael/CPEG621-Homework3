@@ -9,7 +9,7 @@ def segment_building_blocks(code_segment: list[str]):
     split_code = {}
     current_block = ""
     for line in code_segment:
-        if "BB" in line:
+        if "BB" in line and "goto" not in line:
             current_block = line
             split_code[current_block] = []
         else:
@@ -22,6 +22,9 @@ def run_all(code_segment):
     t1 = task1.generate_basic_blocks(code_segment)
     print(f"task 1 output: {t1}")
 
+    t1_split = segment_building_blocks(t1)
+    print(f"split by block: {t1_split}")
+
     latencies = {
         '+': 1,
         '-': 1,
@@ -31,11 +34,40 @@ def run_all(code_segment):
         '/': 4,
         '**': 8
     }
-    t2 = task2.calculate_cycles_from_code(code_segment, latencies)
-    print(f"task 2 output: {t2}")
+    # t2_complete_latency = task2.calculate_cycles_from_code(code_segment, latencies)
+    # print(f"total latency: {t2_complete_latency} cycles")
 
-    t1_split = segment_building_blocks(t1)
-    print(f"split by block: {t1_split}")
+    t1_block_latency = {}
+    for block in t1_split:
+        t1_block_latency[block] = task2.calculate_cycles_from_code(t1_split[block], latencies)
+
+    print(f"pre-CSE per-block latency: {t1_block_latency}")
+
+    t3_split = {}
+    for block in t1_split:
+        t3_split[block] = task3.implement_cse(t1_split[block])
+
+    print(f"post-CSE blocks: {t3_split}")
+
+    t3_block_latency = {}
+    for block in t3_split:
+        t3_block_latency[block] = task2.calculate_cycles_from_code(t3_split[block], latencies)
+
+    print(f"post-CSE per-block latency: {t1_block_latency}")
+
+    t1_total_latency = 0
+    for block in t1_block_latency:
+        t1_total_latency += t1_block_latency[block]
+
+    print(f"pre-CSE total latency: {t1_total_latency}")
+
+    t3_total_latency = 0
+    for block in t3_block_latency:
+        t3_total_latency += t3_block_latency[block]
+
+    
+    print(f"post-CSE total latency: {t3_total_latency}")
+
 
 
 if __name__ == '__main__':
