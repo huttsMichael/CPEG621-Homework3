@@ -1,6 +1,4 @@
-import argparse
-
-def parse_tac(instruction):
+def parse_tac(instruction, latencies):
     # split the = and any other ops to handle seperately
     result_var, operation_part = instruction.split('=')
     result_var = result_var.strip()
@@ -16,7 +14,7 @@ def parse_tac(instruction):
     return (result_var, '?', [])
 
 def calculate_cycles_from_code(instructions_raw, latencies):
-    instructions = [parse_tac(instr) for instr in instructions_raw]
+    instructions = [parse_tac(instr, latencies) for instr in instructions_raw]
 
     ready_time = {}
     max_cycle = 0
@@ -34,7 +32,8 @@ def calculate_cycles_from_code(instructions_raw, latencies):
 
     return max_cycle
 
-if __name__ == '__main__':
+def main():
+    import argparse
     parser = argparse.ArgumentParser(description="Calculate cycles needed for three-address code instructions.")
     parser.add_argument('input_file', type=str, help='Path to the input file containing TAC instructions.')
     args = parser.parse_args()
@@ -54,3 +53,6 @@ if __name__ == '__main__':
 
     total_cycles = calculate_cycles_from_code(code_segment, latencies)
     print(f"Total cycles needed: {total_cycles}")
+
+if __name__ == '__main__':
+    main()

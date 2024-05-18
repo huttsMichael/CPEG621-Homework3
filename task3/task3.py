@@ -1,5 +1,3 @@
-import argparse
-
 def implement_cse(code_segment: list[str], output_path=None):
     history = []
     explored = []
@@ -38,8 +36,8 @@ def implement_cse(code_segment: list[str], output_path=None):
     else:
         print(code_segment)
 
-
-if __name__ == '__main__':
+def main():
+    import argparse
     parser = argparse.ArgumentParser(description="Implement common subexpression elimination in TAC input file.")
     parser.add_argument('input_file', type=str, help='Path to the input file containing TAC instructions.')
     parser.add_argument('--output', type=str, help='Path to the output file to save the result.')
@@ -49,3 +47,7 @@ if __name__ == '__main__':
         code_segment = [line.strip() for line in file.readlines() if line.strip()]
         print(f"input: {code_segment}")
         implement_cse(code_segment)
+
+
+if __name__ == '__main__':
+    main()

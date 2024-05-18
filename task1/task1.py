@@ -1,4 +1,3 @@
-import argparse
 import logging
 
 def show_code(code):
@@ -98,7 +97,10 @@ def generate_basic_blocks(code_segment: list[str], output_path=None, verbose=Fal
         if verbose:
             show_code(processed_code)
 
-if __name__ == '__main__':
+    return processed_code
+
+def main():
+    import argparse
     parser = argparse.ArgumentParser(description="Generate basic blocks from source code.")
     parser.add_argument('input_file', type=str, help='Path to the input source code file.')
     parser.add_argument('--output', type=str, help='Path to the output file to save the result.')
@@ -109,3 +111,6 @@ if __name__ == '__main__':
         code_segment = [line.strip() for line in file.readlines() if line.strip()]
         print(f"input: {code_segment}")
         generate_basic_blocks(code_segment, args.output, args.verbose)
+
+if __name__ == '__main__':
+    main()
