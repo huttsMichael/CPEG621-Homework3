@@ -1,0 +1,5 @@
+tmp1 =  C*3;
+A  = tmp1
+X = B+A;
+D  = tmp1
+C = D/2;

@@ -2,9 +2,9 @@ import logging
 
 def implement_cse(code_segment: list[str], output_path=None, verbose=False):
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format='%(message)s')
-    history = []
-    explored = []
-    processed_code = []
+    history = [] # operations previously seen
+    explored = [] # operations already transformed
+    processed_code = [] # final resultant code
     tmp_counter = 1
     end = False
 
@@ -64,7 +64,7 @@ def main():
     with open(args.input_file, 'r') as file:
         code_segment = [line.strip() for line in file.readlines() if line.strip()]
         print(f"input: {code_segment}")
-        print(implement_cse(code_segment, verbose=args.verbose))
+        print(implement_cse(code_segment, output_path=args.output, verbose=args.verbose))
 
 
 if __name__ == '__main__':

@@ -8,14 +8,14 @@ def generate_basic_blocks(code_segment: list[str], output_path=None, verbose=Fal
     logging.basicConfig(level=logging.DEBUG if verbose else logging.INFO, format='%(message)s')
 
     bb_counter = 1
-    inside_if = False
-    inside_else = False
-    end_condition = False
-    first_line = True
+    inside_if = False # true when inside the "if" part of a conditional statement
+    inside_else = False # true when inside the "else" part of a conditional statement
+    end_condition = False # true when reaching the end of all condition statements
+    first_line = True # true when writing the very first line
 
-    processed_code = []
-    contents_if = []
-    contents_else = []
+    processed_code = [] # list containing the final output
+    contents_if = [] # list containing the contents of the current if statement
+    contents_else = [] # list containing the contents of the current else statement
 
     for line in code_segment:
         line = line.strip()

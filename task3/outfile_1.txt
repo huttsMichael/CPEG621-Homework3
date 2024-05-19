@@ -1,0 +1,7 @@
+tmp1 =  X+3;
+A  = tmp1
+tmp2 =  A*3;
+B  = tmp2
+C = A*B;
+C  = tmp1
+B  = tmp2

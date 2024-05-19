@@ -1,0 +1,24 @@
+a = 120;
+b = 20*2;
+if (a) {
+goto BB2
+}
+else {
+goto BB3
+}
+c = a*b;
+goto BB4
+c = 0;
+goto BB4
+d = a-20;
+if (c) {
+goto BB5
+}
+else {
+goto BB6
+}
+e = d*2
+goto BB7
+e = d/2
+goto BB7
+f = e+d
