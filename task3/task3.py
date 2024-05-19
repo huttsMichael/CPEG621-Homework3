@@ -58,12 +58,13 @@ def main():
     parser = argparse.ArgumentParser(description="Implement common subexpression elimination in TAC input file.")
     parser.add_argument('input_file', type=str, help='Path to the input file containing TAC instructions.')
     parser.add_argument('--output', type=str, help='Path to the output file to save the result.')
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose debug output.')
     args = parser.parse_args()
 
     with open(args.input_file, 'r') as file:
         code_segment = [line.strip() for line in file.readlines() if line.strip()]
         print(f"input: {code_segment}")
-        print(implement_cse(code_segment))
+        print(implement_cse(code_segment, verbose=args.verbose))
 
 
 if __name__ == '__main__':
