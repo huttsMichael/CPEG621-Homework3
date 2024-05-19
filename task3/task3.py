@@ -51,7 +51,7 @@ def implement_cse(code_segment: list[str], output_path=None, verbose=False):
             for line in processed_code:
                 out_fp.write(line + '\n')
 
-    return code_segment
+    return processed_code
 
 def main():
     import argparse
